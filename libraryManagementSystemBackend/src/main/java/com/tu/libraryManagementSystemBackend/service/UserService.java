@@ -8,6 +8,9 @@ import com.tu.libraryManagementSystemBackend.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +18,9 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class    UserService implements UserDetailsService {
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponse registerUser(UserRequest request) {
         if(userRepository.existsByEmail(request.email())) {
@@ -28,8 +31,7 @@ public class UserService {
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .email(request.email())
-//                .password(passwordEncoder.encode(request.password()))
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .role(request.role())
                 .build();
 
@@ -87,4 +89,11 @@ public class UserService {
                 .map(this::convertToUserResponse)
                 .toList();
     }
+
+    @Override
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(()->new UsernameNotFoundException("User not found"));
+    }
+
 }
