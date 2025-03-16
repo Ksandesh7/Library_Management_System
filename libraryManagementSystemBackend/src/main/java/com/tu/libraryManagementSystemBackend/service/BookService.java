@@ -5,10 +5,15 @@ import com.tu.libraryManagementSystemBackend.dto.BookResponse;
 import com.tu.libraryManagementSystemBackend.exception.ResourceNotFoundException;
 import com.tu.libraryManagementSystemBackend.model.Book;
 import com.tu.libraryManagementSystemBackend.repository.BookRepository;
+import com.tu.libraryManagementSystemBackend.specifications.BookSpecifications;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +31,11 @@ public class BookService {
                 .title(request.title())
                 .isbn(request.isbn())
                 .author(request.author())
-                .status("AVAILABLE")
+                .genre(request.genre())
+                .quantity(request.quantity())
+                .price(request.price())
+                .imageUrl(request.imageUrl())
+                .status(request.quantity() > 0 ? "AVAILABLE":"UNAVAILABLE")
                 .build();
 
         book = bookRepository.save(book);
@@ -39,7 +48,11 @@ public class BookService {
                 book.getTitle(),
                 book.getIsbn(),
                 book.getAuthor(),
-                book.getStatus()
+                book.getStatus(),
+                book.getGenre(),
+                book.getQuantity(),
+                book.getPrice(),
+                book.getImageUrl()
         );
     }
 
@@ -54,6 +67,11 @@ public class BookService {
         book.setTitle(request.title());
         book.setIsbn(request.isbn());
         book.setAuthor(request.author());
+        book.setGenre(request.genre());
+        book.setQuantity(request.quantity());
+        book.setPrice(request.price());
+        book.setImageUrl(request.imageUrl());
+        book.setStatus(request.quantity() > 0 ? "AVAILABLE":"UNAVAILABLE");
 
         book = bookRepository.save(book);
         return convertToBookResponse(book);
@@ -65,11 +83,22 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    public List<BookResponse> getAllBooks() {
-        return bookRepository.findAll()
-                .stream()
-                .map(this::convertToBookResponse)
-                .toList();
+//    public List<BookResponse> getAllBooks() {
+//        return bookRepository.findAll()
+//                .stream()
+//                .map(this::convertToBookResponse)
+//                .toList();
+//    }
+
+    public Page<BookResponse> getAllBooks(
+            String genre,
+            BigDecimal maxPrice,
+            String searchTerm,
+            Pageable pageable
+    ) {
+        Specification<Book> spec = BookSpecifications.withFilters(genre, maxPrice, searchTerm);
+        Page<Book> books = bookRepository.findAll(spec, pageable);
+        return books.map(this::convertToBookResponse);
     }
 
     public BookResponse getBookById(UUID id) {
