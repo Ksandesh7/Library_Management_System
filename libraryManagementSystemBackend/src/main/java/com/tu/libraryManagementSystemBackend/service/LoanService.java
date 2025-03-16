@@ -30,8 +30,12 @@ public class LoanService {
                 .orElseThrow(()->new ResourceNotFoundException("User not found"));
 
         Book book = bookRepository.findById(request.bookId())
-                .filter(b -> "AVAILABLE".equals(b.getStatus()))
+                .filter(b -> "AVAILABLE".equals(b.getStatus()) && b.getQuantity()>0)
                 .orElseThrow(()->new InvalidOperationException("Book not available"));
+
+        if(book.getQuantity() <= 0) {
+            throw new InvalidOperationException("Book out of stock");
+        }
 
         Loan loan = Loan.builder()
                 .user(user)
@@ -41,7 +45,11 @@ public class LoanService {
                 .status("ACTIVE")
                 .build();
 
-        book.setStatus("BORROWED");
+        book.setQuantity(book.getQuantity()-1);
+        if(book.getQuantity()==0) {
+            book.setStatus("BORROWED");
+        }
+
         bookRepository.save(book);
 
         loan = loanRepository.save(loan);
@@ -71,8 +79,10 @@ public class LoanService {
         loan.setStatus("RETURNED");
 
         Book book = loan.getBook();
-        book.setStatus("AVAILABLE");
-
+        book.setQuantity(book.getQuantity()+1);
+        if(book.getQuantity()>0) {
+            book.setStatus("AVAILABLE");
+        }
         bookRepository.save(book);
 
         loan = loanRepository.save(loan);
