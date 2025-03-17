@@ -69,7 +69,7 @@ public class    UserService implements UserDetailsService {
         user.setRole(request.role());
 
         if(!request.password().isBlank()) {
-            user.setPassword(request.password());
+            user.setPassword(passwordEncoder.encode(request.password()));
         }
 
         user = userRepository.save(user);

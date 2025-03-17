@@ -83,13 +83,6 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-//    public List<BookResponse> getAllBooks() {
-//        return bookRepository.findAll()
-//                .stream()
-//                .map(this::convertToBookResponse)
-//                .toList();
-//    }
-
     public Page<BookResponse> getAllBooks(
             String genre,
             BigDecimal maxPrice,
