@@ -17,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -77,27 +79,34 @@ public class FineService {
         );
     }
 
-    public void createFine(Loan loan) {
-        if(LocalDateTime.now().isAfter(loan.getDueDate())) {
-            if(fineRepository.existsByLoanId(loan.getId())) {
-                throw new InvalidOperationException("Fine already exists for this loan");
-            }
+    public void createOrUpdateFine(Loan loan) {
+        LocalDateTime dueDate = loan.getDueDate();
+        LocalDateTime referenceDate = loan.getStatus().equals("RETURNED") && loan.getReturnDate()!=null ? loan.getReturnDate().toLocalDate().atTime(loan.getReturnDate().toLocalTime()) : LocalDateTime.now();
 
+        if(referenceDate.isAfter(dueDate)) {
             BigDecimal dailyFineRate = configRepository.findByKey("daily_fine_rate")
                     .map(config -> new BigDecimal(config.getValue()))
                     .orElseThrow(()->new InvalidOperationException("Fine rate not configured"));
 
-            long daysOverdue = ChronoUnit.MINUTES.between(loan.getDueDate(), LocalDateTime.now());
+            long daysOverdue = ChronoUnit.MINUTES.between(dueDate, referenceDate);
 
             BigDecimal amount = dailyFineRate.multiply(BigDecimal.valueOf(daysOverdue));
 
-            Fine fine = Fine.builder()
-                    .loan(loan)
-                    .amount(amount)
-                    .status("UNPAID")
-                    .build();
-
-            fineRepository.save(fine);
+            Optional<Fine> existingFine = fineRepository.findByLoanId(loan.getId());
+            if (existingFine.isPresent()) {
+                Fine fine = existingFine.get();
+                if (!fine.getStatus().equals("PAID")) {
+                    fine.setAmount(amount);
+                    fineRepository.save(fine);
+                }
+            } else {
+                Fine fine = Fine.builder()
+                        .loan(loan)
+                        .amount(amount)
+                        .status("UNPAID")
+                        .build();
+                fineRepository.save(fine);
+            }
         }
     }
 }

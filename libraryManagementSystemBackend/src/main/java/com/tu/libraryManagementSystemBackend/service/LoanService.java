@@ -87,9 +87,7 @@ public class LoanService {
 
         loan = loanRepository.save(loan);
 
-        if(LocalDateTime.now().isAfter(loan.getDueDate())) {
-            fineService.createFine(loan);
-        }
+        fineService.createOrUpdateFine(loan);
         return convertToLoanResponse(loan);
     }
 
@@ -121,4 +119,9 @@ public class LoanService {
                 .toList();
     }
 
+    public LoanResponse getLoanById(UUID loanId) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(()->new ResourceNotFoundException("Loan Not Found"));
+        return convertToLoanResponse(loan);
+    }
 }
