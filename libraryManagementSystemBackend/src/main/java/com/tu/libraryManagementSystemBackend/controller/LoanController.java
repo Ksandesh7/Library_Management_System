@@ -60,4 +60,11 @@ public class LoanController {
         List<LoanResponse> response = loanService.getLoansByUserId(userId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{loanId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LoanResponse> getLoanById(@PathVariable UUID loanId) {
+        LoanResponse response = loanService.getLoanById(loanId);
+        return ResponseEntity.ok(response);
+    }
 }
