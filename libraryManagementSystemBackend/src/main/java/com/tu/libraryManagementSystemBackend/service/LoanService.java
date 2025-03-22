@@ -14,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -123,5 +125,12 @@ public class LoanService {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(()->new ResourceNotFoundException("Loan Not Found"));
         return convertToLoanResponse(loan);
+    }
+
+    public Map<String, Boolean> checkActiveLoanStatus(UUID userId, UUID bookId) {
+        boolean hasActiveLoan = loanRepository.existsByUserAndBookAndStatus(userId, bookId, "ACTIVE");
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("hasActiveLoan", hasActiveLoan);
+        return response;
     }
 }

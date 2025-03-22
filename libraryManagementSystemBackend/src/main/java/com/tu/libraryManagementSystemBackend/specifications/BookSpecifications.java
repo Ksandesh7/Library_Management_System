@@ -11,10 +11,10 @@ public class BookSpecifications {
                 genre==null ? null : criteriaBuilder.equal(root.get("genre"), genre);
     }
 
-    public static Specification<Book> priceLessThanOrEqual(BigDecimal maxPrice) {
-        return (root, query, criteriaBuilder) ->
-                maxPrice==null ? null : criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice);
-    }
+//    public static Specification<Book> priceLessThanOrEqual(BigDecimal maxPrice) {
+//        return (root, query, criteriaBuilder) ->
+//                maxPrice==null ? null : criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice);
+//    }
 
     public static Specification<Book> titleContains(String searchTerm) {
         return (root, query, criteriaBuilder) ->
@@ -26,11 +26,11 @@ public class BookSpecifications {
 
     public static Specification<Book> withFilters(
             String genre,
-            BigDecimal maxPrice,
+//            BigDecimal maxPrice,
             String searchTerm
     ) {
         return Specification.where(hasGenre(genre))
-                .and(priceLessThanOrEqual(maxPrice))
+//                .and(priceLessThanOrEqual(maxPrice))
                 .and(titleContains(searchTerm));
     }
 

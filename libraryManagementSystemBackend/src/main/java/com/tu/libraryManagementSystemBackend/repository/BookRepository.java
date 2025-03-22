@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificationExecutor<Book> {
-    Optional<Book> findByIsbn(String isbn);
-    boolean existsByIsbn(String isbn);
+//    Optional<Book> findByIsbn(String isbn);
+//    boolean existsByIsbn(String isbn);
     Optional<Book> findById(UUID id);
     Page<Book> findAll(Specification<Book> spec, Pageable pageable);
 }

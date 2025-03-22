@@ -57,7 +57,7 @@ public class BookController {
     @GetMapping
     public ResponseEntity<Page<BookResponse>> getAllBooks(
             @RequestParam(required = false) String genre,
-            @RequestParam(required = false) BigDecimal maxPrice,
+//            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -65,7 +65,7 @@ public class BookController {
     ) {
         Sort sortObj = Sort.by(new Sort.Order(Sort.Direction.fromString(sort[1]), sort[0]));
         Pageable pageable = PageRequest.of(page, size, sortObj);
-        Page<BookResponse> response = bookService.getAllBooks(genre, maxPrice, search, pageable);
+        Page<BookResponse> response = bookService.getAllBooks(genre, search, pageable);
 
         return ResponseEntity.ok(response);
     }
@@ -79,15 +79,15 @@ public class BookController {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BookResponse> getBookById(@PathVariable UUID id) {
         BookResponse book = bookService.getBookById(id);
         return ResponseEntity.ok(book);
     }
 
-    @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<BookResponse> getBookByIsbn(@PathVariable String isbn) {
-        BookResponse book = bookService.getBookByIsbn(isbn);
-        return ResponseEntity.ok(book);
-    }
+//    @GetMapping("/isbn/{isbn}")
+//    public ResponseEntity<BookResponse> getBookByIsbn(@PathVariable String isbn) {
+//        BookResponse book = bookService.getBookByIsbn(isbn);
+//        return ResponseEntity.ok(book);
+//    }
 }

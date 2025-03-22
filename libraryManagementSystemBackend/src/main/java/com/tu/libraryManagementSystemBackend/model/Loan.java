@@ -34,5 +34,5 @@ public class Loan {
     private LocalDateTime returnDate;
 
     @Column(nullable = false)
-    private String status; // Active, Returned
+    private String status; // ACTIVE, RETURNED
 }

@@ -21,14 +21,14 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, unique = true)
-    private String isbn;
+//    @Column(nullable = false, unique = true)
+//    private String isbn;
 
     @Column(nullable = false)
     private String author;
 
     @Column(nullable = false)
-    private String status; // Available, Borrowed
+    private String status; // AVAILABLE, BORROWED
 
     @Column
     private String imageUrl;
@@ -40,6 +40,6 @@ public class Book {
     @Min(0)
     private int quantity;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+//    @Column(nullable = false, precision = 10, scale = 2)
+//    private BigDecimal price;
 }

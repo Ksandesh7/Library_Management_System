@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -55,16 +56,22 @@ public class LoanController {
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<LoanResponse>> getUserLoans(@PathVariable UUID userId) {
         List<LoanResponse> response = loanService.getLoansByUserId(userId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{loanId}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LoanResponse> getLoanById(@PathVariable UUID loanId) {
         LoanResponse response = loanService.getLoanById(loanId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/check/{userId}/{bookId}")
+    public ResponseEntity<Map<String, Boolean>> checkActiveLoan(@PathVariable UUID userId, @PathVariable UUID bookId) {
+        Map<String, Boolean> response = loanService.checkActiveLoanStatus(userId, bookId);
         return ResponseEntity.ok(response);
     }
 }

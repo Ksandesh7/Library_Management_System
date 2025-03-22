@@ -23,17 +23,17 @@ public class BookService {
     private final BookRepository bookRepository;
 
     public BookResponse addBook(BookRequest request) {
-        if(bookRepository.existsByIsbn(request.isbn())) {
-            throw new IllegalArgumentException("ISBN already exits");
-        }
+//        if(bookRepository.existsByIsbn(request.isbn())) {
+//            throw new IllegalArgumentException("ISBN already exits");
+//        }
 
         Book book = Book.builder()
                 .title(request.title())
-                .isbn(request.isbn())
+//                .isbn(request.isbn())
                 .author(request.author())
                 .genre(request.genre())
                 .quantity(request.quantity())
-                .price(request.price())
+//                .price(request.price())
                 .imageUrl(request.imageUrl())
                 .status(request.quantity() > 0 ? "AVAILABLE":"UNAVAILABLE")
                 .build();
@@ -46,12 +46,12 @@ public class BookService {
         return new BookResponse(
                 book.getId(),
                 book.getTitle(),
-                book.getIsbn(),
+//                book.getIsbn(),
                 book.getAuthor(),
                 book.getStatus(),
                 book.getGenre(),
                 book.getQuantity(),
-                book.getPrice(),
+//                book.getPrice(),
                 book.getImageUrl()
         );
     }
@@ -60,16 +60,16 @@ public class BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Book not found"));
 
-        if(!book.getIsbn().equals(request.isbn()) && bookRepository.existsByIsbn(request.isbn())) {
-            throw new IllegalArgumentException("ISBN already exists");
-        }
+//        if(!book.getIsbn().equals(request.isbn()) && bookRepository.existsByIsbn(request.isbn())) {
+//            throw new IllegalArgumentException("ISBN already exists");
+//        }
 
         book.setTitle(request.title());
-        book.setIsbn(request.isbn());
+//        book.setIsbn(request.isbn());
         book.setAuthor(request.author());
         book.setGenre(request.genre());
         book.setQuantity(request.quantity());
-        book.setPrice(request.price());
+//        book.setPrice(request.price());
         book.setImageUrl(request.imageUrl());
         book.setStatus(request.quantity() > 0 ? "AVAILABLE":"UNAVAILABLE");
 
@@ -85,11 +85,11 @@ public class BookService {
 
     public Page<BookResponse> getAllBooks(
             String genre,
-            BigDecimal maxPrice,
+//            BigDecimal maxPrice,
             String searchTerm,
             Pageable pageable
     ) {
-        Specification<Book> spec = BookSpecifications.withFilters(genre, maxPrice, searchTerm);
+        Specification<Book> spec = BookSpecifications.withFilters(genre, searchTerm);
         Page<Book> books = bookRepository.findAll(spec, pageable);
         return books.map(this::convertToBookResponse);
     }
@@ -100,9 +100,9 @@ public class BookService {
         return convertToBookResponse(book);
     }
 
-    public BookResponse getBookByIsbn(String isbn) {
-        Book book = bookRepository.findByIsbn(isbn)
-                .orElseThrow(()->new ResourceNotFoundException("Book not found"));
-        return convertToBookResponse(book);
-    }
+//    public BookResponse getBookByIsbn(String isbn) {
+//        Book book = bookRepository.findByIsbn(isbn)
+//                .orElseThrow(()->new ResourceNotFoundException("Book not found"));
+//        return convertToBookResponse(book);
+//    }
 }

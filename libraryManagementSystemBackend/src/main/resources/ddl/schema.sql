@@ -17,13 +17,13 @@ CREATE TABLE users (
 CREATE TABLE books (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(255) NOT NULL,
-    isbn VARCHAR(13) UNIQUE NOT NULL,
+--    isbn VARCHAR(13) UNIQUE NOT NULL,
     author VARCHAR(255) NOT NULL,
     genre VARCHAR(50) NOT NULL,
     quantity INT NOT NULL CHECK (quantity >= 0),
-    price DECIMAL(10,2) NOT NULL,
+--    price DECIMAL(10,2) NOT NULL,
     image_url VARCHAR(255),
-    status VARCHAR(20) NOT NULL CHECK (status IN ('AVAILABLE', 'UNAVAILABLE')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('AVAILABLE', 'BORROWED')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

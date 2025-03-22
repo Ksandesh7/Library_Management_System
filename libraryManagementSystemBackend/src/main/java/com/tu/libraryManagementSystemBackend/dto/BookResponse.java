@@ -6,11 +6,11 @@ import java.util.UUID;
 public record BookResponse(
         UUID id,
         String title,
-        String isbn,
+//        String isbn,
         String author,
         String status,
         String genre,
         int quantity,
-        BigDecimal price,
+//        BigDecimal price,
         String imageUrl
 ) {}
